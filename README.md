@@ -1,1 +1,1 @@
-# Wordle
+Wordle game made for school. 

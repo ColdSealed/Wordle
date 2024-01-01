@@ -1,0 +1,201 @@
+import java.util.*;
+public class Main
+{
+    public static void main(String[] args)
+    {
+        Scanner console = new Scanner(System.in);
+        Random rng = new Random();
+
+        String input;
+        String [] fiveLetterAnswers = {"CIVIL", "SHACK", "HARDS", "FLASH", "PLUMP", "BRIEF", "VALUE", "SWAMP", "POISE", "CROSS", "CURSE", "FADED", "PLUCK", "WORST", "CRAMP", "DREAD", "CLICK", "TRUCK", "CACTI", "LINER", "PATCH", "CROSS", "NURSE", "DUPED", "OASIS", "SCOOT", "DRILL"};
+        String [] fourLetterAnswers = {"BALL", "WORD", "DIRE", "COMA", "GLUT", "HARK", "ROWN", "FELT", "LOST", "YORK", "HOWL", "PEND", "WORK", "EVEN", "LORE", "JULY", "LEAF", "SLID", "FERN", "EDGY", "VAST", "FIND", "PACK", "HULK", "BORN"};
+        String [] sixLetterAnswers = {"TREBLE", "SWITCH", "CHURCH", "FORCED", "STEAMY", "AWAKED", "DEAFLY", "FARMER", "ASTRAY", "FLOWER", "POUNCE", "PRIEST", "CAUSAL", "ATTIRE", "GOBLIN", "UNWISE", "CHOKED", "PUPPET", "SWITCH", "AGENCY", "DOUGHY", "DILATE", "TROPIC", "OUTWIT", "INDOOR"};
+        int winStreak = 0;
+        int maxStreak = 0;
+
+        while(true){
+            //instructions
+            int hintUsed = 0;
+            int errorCounter = 0;
+            String hintLetters = "";
+
+            String answer = "empty";
+
+            System.out.println("Wordle is a guessing game in which you have 6 attempts to guess a 5 letter word.");
+            System.out.println("After entering your guess, the program will assign each letter \"Green\",\"Yellow\", or \"Gray\".");
+            System.out.println("Green means that the letter is in the correct position.");
+            System.out.println("Yellow means that the letter is in the word but not in that position.");
+            System.out.println("Gray means that the letter is not in the word.");
+            System.out.println("Current streak - " + winStreak);
+            System.out.println("Max streak - " + maxStreak);
+            System.out.println("To begin the game, enter \"start\" to start.");
+
+            input = console.nextLine();
+            if (input.toLowerCase().equals("start")){
+                System.out.print("\u000c");
+                while (answer.equals("empty")){
+                    System.out.println("Before we begin, would you like to play 4 letter wordle or 5 letter wordle?");
+                    System.out.println("Enter \"Four\" to play 4 letter wordle, \"Five\" to play 5 letter wordle or \"Six\" to play 6 letter wordle or enter \"Quit\" to go back to the main menu");
+                    System.out.println("Four Letter Wordle -  Beginner\nFive Letter Wordle - Normal\nSix Letter Wordle - Hard");
+                    input = console.nextLine();
+                    System.out.print("\u000c");
+                    if (input.toLowerCase().equals("four") || input.equals("4")){
+                        answer = fourLetterAnswers[rng.nextInt(fourLetterAnswers.length)];
+
+                    } else if (input.toLowerCase().equals("five") || input.equals("5")){
+                        answer = fiveLetterAnswers[rng.nextInt(fiveLetterAnswers.length)];
+
+                    } else if (input.toLowerCase().equals("six") || input.equals("6")){
+                        answer = sixLetterAnswers[rng.nextInt(sixLetterAnswers.length)];
+                    } else if (input.toLowerCase().equals("quit")) {
+                        answer = "quit";
+
+                    }
+
+                }
+                if (answer.equals("quit")){
+                    if (winStreak > maxStreak){
+                        maxStreak = winStreak;
+
+                    }
+                    winStreak = 0;
+                    continue;
+
+                }
+                System.out.print("\u000c");
+
+                for (int i = 1; i < 7; i++){
+                    System.out.println("Guess " + i + " of 6: Please enter a " + answer.length() + " letter input or enter \"quit\" to return to the main menu.");
+                    System.out.println("If you would like some help, enter \"hint\" for a hint. You get three hints max and have used " + hintUsed + " hints so far");
+                    input = console.nextLine();
+                    if (input.toLowerCase().equals("quit")){
+
+                        System.out.println("The correct answer was " +  "\"" + answer + "\"");
+                        try {
+                            Thread.sleep(3000);
+
+                        } catch (Exception e){
+                            System.out.println("Error");
+
+                        }
+                        System.out.print("\u000c");
+                        if (winStreak > maxStreak){
+                            maxStreak = winStreak;
+                        }
+                        winStreak = 0;
+                        break;
+                    } else if (input.toLowerCase().equals("hint")){
+                        i--;
+                        if (hintUsed == 0){
+                            System.out.println("Your first hint is that the secret word starts with the letter \"" + answer.substring(0, 1) + "\"");
+                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                            hintUsed++;
+                            hintLetters += answer.substring(0, 1);
+                        } else if (hintUsed == 1){
+                            int randomNumber = rng.nextInt(answer.length());
+                            //Protects against giving the beginning or ending letter of the word again
+                            while (randomNumber == 0 || randomNumber == 1){
+                                randomNumber = rng.nextInt(answer.length());
+                            }
+                            System.out.println("Your second hint is that the secret word contains the letter \"" + answer.substring(randomNumber - 1, randomNumber) + "\"");
+                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                            hintUsed++;
+                            hintLetters += answer.substring(randomNumber - 1, randomNumber);
+                        } else if (hintUsed == 2){
+                            System.out.println("Your third hint is that the secret word ends with the letter \"" + answer.substring(answer.length() - 1, answer.length()) + "\"");
+                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                            hintUsed++;
+                            hintLetters += answer.substring(answer.length() - 1, answer.length());
+                        } else {
+                            System.out.println("Sorry, you have used all of your hints. Just as a remainder, the secret word starts with the letter \"" + hintLetters.substring(0, 1) + "\", contains the letter \"" + hintLetters.substring(1, 2) + "\" and ends with the letter \"" + hintLetters.substring(2, 3) + "\"");
+                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+                        }
+
+                    }	  else if (input.length() != answer.length() || input.contains("0")||input.contains("1")||input.contains("2")||input.contains("3")||input.contains("4")||input.contains("5")||input.contains("6")||input.contains("7")||input.contains("8")||input.contains("9") || input.contains("`")|| input.contains("~")|| input.contains("!")|| input.contains("@")|| input.contains("#")|| input.contains("$")|| input.contains("%")|| input.contains("^")|| input.contains("&")|| input.contains("*")|| input.contains("(")|| input.contains(")")|| input.contains("-")|| input.contains("+")|| input.contains("=")|| input.contains("[")|| input.contains("{")|| input.contains("]")|| input.contains("}")|| input.contains("|")|| input.contains(";")|| input.contains(":")|| input.contains("'")|| input.contains("<")|| input.contains(",")|| input.contains(">")|| input.contains(".")|| input.contains("?")|| input.contains("/")) {
+                        i--;
+                    } else {
+                        String modifiedAnswer = answer;
+                        String [] result = new String[answer.length()];
+                        for (int f = 0; f < input.length(); f++){
+
+                            if (answer.substring(f, f + 1).equals(input.substring(f, f + 1).toUpperCase())){
+                                result[f] = "Green";
+                                modifiedAnswer = modifiedAnswer.substring(0, f) + "-" + modifiedAnswer.substring(f + 1);
+                            }
+                        }
+
+                        for (int g = 0; g < modifiedAnswer.length(); g++){
+                            if (result[g] == null) {
+                                if (modifiedAnswer.contains(input.substring(g, g + 1).toUpperCase())){
+                                    result[g] = "Yellow";
+                                    int indexFound = modifiedAnswer.indexOf(input.substring(g, g + 1).toUpperCase());
+                                    modifiedAnswer = modifiedAnswer.substring(0, indexFound) + "-" + modifiedAnswer.substring(indexFound + 1);
+
+                                } else {
+                                    result[g] = "Gray";
+
+                                }
+                            }
+                            System.out.println(input.substring(g, g + 1).toUpperCase() + " - " + result[g]);
+
+                            if (result[g].equals("Yellow") || result[g].equals("Gray")){
+                                errorCounter++;
+
+                            }
+
+                        }
+                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                        if (errorCounter == 0){
+                            System.out.println("You win! It took you " + i + " guesses to get the correct answer!\nLet's play again!");
+                            winStreak++;
+                            if (winStreak > maxStreak){
+                                maxStreak = winStreak;
+
+                            }
+
+                            try
+                            {
+                                Thread.sleep(4000); //Pause the program for 1000 ms (1 second)
+                            }
+                            catch(Exception e)
+                            {
+                                System.out.println("Error");
+                            }
+                            System.out.print("\u000c");
+
+                            break;
+
+                        } else if (i == 6){
+                            System.out.println("You lost, the correct answer was " + answer + "\nLet's play again!");
+                            if (winStreak > maxStreak){
+                                maxStreak = winStreak;
+                                winStreak = 0;
+
+                            }
+                            try
+                            {
+                                Thread.sleep(4000); //Pause the program for 1000 ms (1 second)
+                            }
+                            catch(Exception e)
+                            {
+                                System.out.println("Error");
+                            }
+                            System.out.print("\u000c");
+                            break;
+
+                        } else {
+                            errorCounter = 0;
+
+                        }
+                    }
+                }
+
+            } else {
+                System.out.print("\u000c");
+
+            }
+        }
+    }
+}
+
